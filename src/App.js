@@ -8,9 +8,8 @@ class App extends Component {
     websiteip: '',
     usernameip: '',
     passwordip: '',
+    searchIp: '',
     showPassword: false,
-    searchResults: [],
-    showSearch: false,
   }
 
   renderNoPasswordView = () => (
@@ -25,11 +24,11 @@ class App extends Component {
   )
 
   renderPasswordView = () => {
-    const {inputList, searchResults, showSearch} = this.state
+    const {inputList, searchIp} = this.state
+    const result = inputList.filter(each =>
+      each.website.toLowerCase().includes(searchIp),
+    )
 
-    const result = !showSearch ? inputList : searchResults
-    console.log(result)
-    console.log(inputList, searchResults)
     return (
       <ul className="unordered-list">
         {result.map(each => {
@@ -145,30 +144,17 @@ class App extends Component {
     })
   }
 
-  onChangeCheckBox = event => {
+  onChangeCheckBox = () => {
     this.setState(prevState => ({
       showPassword: !prevState.showPassword,
     }))
   }
 
   onChangeSearchIp = event => {
-    const {inputList} = this.state
-    const searchIp = event.target.value
-    const filteredList = inputList.filter(each =>
-      each.website.includes(searchIp),
-    )
+    const searchIp = event.target.value.toLowerCase()
     this.setState({
-      searchResults: filteredList,
+      searchIp,
     })
-    if (searchIp === '') {
-      this.setState({
-        showSearch: false,
-      })
-    } else {
-      this.setState({
-        showSearch: true,
-      })
-    }
   }
 
   render() {
@@ -178,7 +164,11 @@ class App extends Component {
       passwordip,
       inputList,
       showPassword,
+      searchIp,
     } = this.state
+    const result = inputList.filter(each =>
+      each.website.toLowerCase().includes(searchIp),
+    )
 
     return (
       <div className="container1">
@@ -291,7 +281,7 @@ class App extends Component {
             </div>
           </div>
           <ul className="unorderedlist">
-            {inputList.length !== 0
+            {result.length !== 0
               ? this.renderPasswordView()
               : this.renderNoPasswordView()}
           </ul>
